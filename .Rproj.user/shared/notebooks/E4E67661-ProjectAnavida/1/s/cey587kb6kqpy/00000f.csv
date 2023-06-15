@@ -1,0 +1,6 @@
+"0","ggplot(NA_sum, aes(x = Genre, y = NA_Sales)) +"
+"0","  geom_bar(stat = ""identity"", fill = ""lightgreen"") +"
+"0","  labs(x = ""Genre"", y = ""Sales"") +"
+"0","  geom_text(aes(label=NA_Sales), nudge_y = 50) +"
+"0","  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +"
+"0","  ggtitle(""Penjualan Terbanyak pada Wilayah Amerika Utara berdasarkan Genre Game"")"

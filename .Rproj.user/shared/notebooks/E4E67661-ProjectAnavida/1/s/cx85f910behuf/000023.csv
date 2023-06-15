@@ -1,0 +1,5 @@
+"0","result <- aggregate(data$Global_Sales, by = list(data$Platform), FUN = sum)"
+"0","colnames(result) <- c(""Platform"", ""Total_Global_Sales"")"
+"0","result2 <- result[order(result$Total_Global_Sales, decreasing = TRUE),]"
+"0","rownames(result2) <- NULL"
+"0","result2"

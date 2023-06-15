@@ -1,0 +1,8 @@
+"0",""
+"0","ggplot(Global_sum, aes(x = Genre, y = Global_Sales)) +"
+"0","  geom_bar(stat = ""identity"", fill = ""lightgreen"") +"
+"0","  labs(x = ""Genre"", y = ""Sales"") +"
+"0","  geom_text(aes(label=Global_Sales), nudge_y = 100) +"
+"0","  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +"
+"0","  ggtitle(""Global Sales berdasarkan Genre Game"")"
+"0",""

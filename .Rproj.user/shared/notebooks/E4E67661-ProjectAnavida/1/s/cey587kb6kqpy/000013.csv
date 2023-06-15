@@ -1,0 +1,7 @@
+"0",""
+"0","ggplot(JP_sum, aes(x = Genre, y = JP_Sales)) +"
+"0","  geom_bar(stat = ""identity"", fill = ""lightgreen"") +"
+"0","  labs(x = ""Genre"", y = ""Sales"") +"
+"0","  geom_text(aes(label=JP_Sales), nudge_y = 20) +"
+"0","  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +"
+"0","  ggtitle(""Penjualan Terbanyak pada Negara Jepang berdasarkan Genre Game"")"

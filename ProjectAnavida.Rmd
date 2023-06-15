@@ -1,0 +1,340 @@
+---
+title: "Project Akhir MK Analisis dan Visualisasi Data"
+author: "J0303201138 Dewa Satria Putra"
+date: "2023-06-08"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+<hr style="height:3px;border-width:0;color:black;background-color:black">
+## Analisis *Video Game Sales* dengan menggunakan RStudio
+<hr style="height:3px;border-width:0;color:black;background-color:black">
+
+Dataset yang digunakan : *Video Game Sales* </br>
+Sumber : [Video Game Sales Dataset](https://www.kaggle.com/datasets/gregorut/videogamesales)
+
+### Penjelasan Dataset :
+Dataset bersumber dari [kaggle](https://www.kaggle.com) <br>
+Dataset Video Game Sales berisi daftar video game dengan penjualan lebih dari 100.000 eksemplar.Terdapat 11 Kolom Data yaitu:
+
+<style>
+table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+</style>
+<table>
+  <tr>
+    <th>No</th>
+    <th>Nama Kolom</th>
+    <th>Penjelasan</th>
+    <th>Tipe Data</th>
+  </tr>
+  <tr>
+    <td>1</td>
+    <td>Rank</td>
+    <td>Ranking berdasarkan penjualan keseluruhan</td>
+    <td>integer</td>
+  </tr>
+  <tr>
+    <td>2</td>
+    <td>Name</td>
+    <td>Nama dari game</td>
+    <td>character</td>
+  </tr>
+  <tr>
+    <td>3</td>
+    <td>Platform</td>
+    <td>Platform dari game yang rilis</td>
+    <td>character</td>
+  </tr>
+  <tr>
+    <td>4</td>
+    <td>Year</td>
+    <td>Tahun rilis dari game</td>
+    <td>character</td>
+  </tr>
+  <tr>
+    <td>5</td>
+    <td>Genre</td>
+    <td>Genre dari game</td>
+    <td>character</td>
+  </tr>
+    <tr>
+    <td>6</td>
+    <td>Publisher</td>
+    <td>Penerbit dari game</td>
+    <td>character</td>
+  </tr>
+    <tr>
+    <td>7</td>
+    <td>NA_Sales</td>
+    <td>Penjualan di *North America* (dalam juta dollar)</td>
+    <td>double</td>
+  </tr>
+    <tr>
+    <td>8</td>
+    <td>EU_Sales</td>
+    <td>Penjualan di *Europe* (dalam juta dollar)</td>
+    <td>double</td>
+  </tr>
+    <tr>
+    <td>9</td>
+    <td>JP_Sales</td>
+    <td>Penjualan di Jepang (dalam juta dollar)</td>
+    <td>double</td>
+  </tr>
+    <tr>
+    <td>10</td>
+    <td>Other_Sales</td>
+    <td>Penjualan di wilayah selain NA, EU, dan JP (dalam juta dollar)</td>
+    <td>doubler</td>
+  </tr>
+    <tr>
+    <td>11</td>
+    <td>Global_Sales</td>
+    <td>Jumlah Sales di seluruh wilayah</td>
+    <td>double</td>
+  </tr>
+</table>
+
+### Tahapan yang akan dilakukan
+1. Business Question
+2. Data Understanding
+3. Data Preparation
+5. Practical Statistics
+4. Data Visualization with ggplot
+4. Conclusion
+
+### 1 *Business Question*
+
+1. Publisher apa yang memiliki jumlah game terbanyak? Tampilkan 10 Publisher dengan jumlah release game terbanyak
+2. Platform apa yang memiliki Global Sales terbanyak?
+3. Kita ingin melihat Genre Game dengan penjualan terbesar dan penjualan terkecil di Setiap Bagian untuk proses selanjutnya
+4. Bagaimana perbandingan Sales antara 3 major region?
+
+### 2 *Data Understanding*
+Jika kita melihat tabel diatas yang berisi penjelasan dari setiap kolom pada dataset, masih ada beberapa tipe data yang tidak sesuai dengan ketentuannya seperti: </br>
+- Year yang seharusnya memiliki tipe data Integer \
+- Platform, Genre, Publisher yang seharusnya memiliki tipe data "Factor" atau tipe data Category
+
+### 3 *Data Preparation*
+```{r}
+data = read.csv("dataset/vgsales.csv")
+rownames(data) <- NULL
+head(data,5)
+```
+Proses Mengubah Tipe Data pada kolom ke tipe data yang sesuai
+```{r}
+data$Year <- as.integer(data$Year)
+data[,c("Platform", "Genre", "Publisher")] <- lapply(data[,c("Platform", "Genre", "Publisher")], as.factor)
+```
+
+
+Melakukan pengecekan pada data setelah tipe data diubah
+```{r}
+head(data, 5)
+```
+Dapat kita lihat bahwa tipe data sudah berubah sesuai dengan ketentuannya. </br>
+Selanjutnya, kita akan cek apakah terdapat duplicate data berdasarkan Judul dari Game nya
+
+Melakukan pengecekan jumlah baris pada kolom Name
+```{r}
+length(data$Name)
+```
+```{r}
+length(unique(data$Name))
+```
+Dengan menggunakan method length dan unique, kita dapat mendeteksi apakah terdapat duplicate value, terlihat bahwa terdapat 11493 unique value dari 16598 data. Namun, unique data tersebut hanya berdasarkan nama, ada kemungkinan bahwa game tersebut rilis kembali di tahun yang berbeda, ada kemungkinan lain game tersebut rilis di platform lain, dan ada kemungkinan jika game tersebut rilis dengan publisher yang berbeda. Jadi, tidak dapat dipastikan apakah data tersebut terdapat Duplicate Value.
+
+Namun apabila mengasumsikan hanya berdasarkan nama game, dapat dilakukan tahapan seperti di bawah ini:
+
+```{r}
+index.data <- match(unique(data$Name), data$Name)
+unique_data <- data[index.data,]
+```
+
+
+Lakukan Pengecekan apakah terdapat Missing Value pada Data
+```{r}
+anyNA(data)
+```
+Dengan menggunakan fungsi anyNA, mengeluarkan output TRUE yang berarti terdapat *Missing Values*.Kita dapat melihat lebih jauh lagi dengan menggunakan fungsi colSums
+
+```{r}
+colSums(is.na(data))
+```
+Dengan menggunakan colSums, terdeteksi bahwa missing value terdapat pada kolom data Year. Pada kasus saat ini, karena pada Business Questions tidak ada yang berhubungan dengan Year maka data dengan missing value tidak akan dihapus untuk melanjutkan ke proses selanjutnya yaitu visualisasi.
+
+### 4 *Descriptive Statistics*
+
+Pada bagian ini, akan dilakukan statistika deskriptif. </br>
+Pertama, akan mencari *Central Tendency* atau nilai pusat dari **Global_sales** </br>
+
+Karena Data memiliki Outlier, Maka akan menggunakan nilai median untuk mencari nilai tesebut
+
+```{r}
+median(data$Global_Sales)
+```
+Nilai Central Tendency dari **Global_Sales** yaitu 0.17 Juta Dollar
+
+### 5 *Data Visualization*
+
+Karena proses preparasi data sudah dilakukan dan sudah selesai, berarti data sudah siap untuk di visualisasi. Selanjutnya akan dilakukan visualisasi data dengan menggunakan library ggplot2.
+
+```{r}
+library(ggplot2)
+```
+
+Setelah memanggil library ggplot, kita akan membuat sebuah data frame dari data yang ada, disini saya akan membuat visualisasi publisher dengan jumlah game terbanyak. Kemudian setelah membuat dataframe, menggunakan fungsi order untuk mengurutkan data dari yang terbesar.
+```{r}
+plot <- table(data$Publisher)
+plot <- as.data.frame(plot)
+plot <- plot[order(plot$Freq, decreasing = T),]
+plot <- head(plot,10)
+plot
+```
+Karena data sudah berbentuk data frame dan sudah berurut, maka dapat dilakukan visualisasi
+
+```{r}
+ggplot(plot, mapping = aes(x = Var1, y = Freq)) +
+  geom_col(fill = 'lightgreen') + 
+  labs(x = "Publisher", y = "Jumlah Game") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  geom_text(aes(label=Freq), nudge_y = -100) +
+  ggtitle("10 Publisher dengan Release Game terbanyak") +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+<hr>
+Dengan menggunakan fungsi ggplot, kita dapat membuat sebuah visualisasi seperti diatas yang akan menjawab salah satu business questions yaitu perusahaan dengan jumlah rilis game terbanyak. Selanjutnya data tersebut dapat dimanfaatkan untuk misal ingin berkolaborasi untuk membuat game dengan perusahaan yang bersangkutan.
+
+
+Setelah itu, akan kita lakukan visualisasi lain untuk menjawab business question yang lainnya.
+
+```{r}
+result <- aggregate(data$Global_Sales, by = list(data$Platform), FUN = sum)
+colnames(result) <- c("Platform", "Total_Global_Sales")
+result2 <- result[order(result$Total_Global_Sales, decreasing = TRUE),]
+rownames(result2) <- NULL
+result2
+```
+Disini dilakukan agregasi dengan FUN yaitu sum, yang akan menjumlahkan kolom **Global_Sales** berdasarkan platform dari game.</br>
+Setelah itu dapat kita lakukan visualisasi
+
+```{r}
+ggplot(result2, mapping = aes(x = Total_Global_Sales, y = Platform)) + 
+  geom_col(fill = 'lightgreen', width = 0.8) +
+  labs(y = "Platform", x = "Total Penjualan Secara Keseluruhan (Global_Sales)") + 
+  
+  ggtitle("Global Sales berdasarkan Jenis Platform") +
+  geom_text(aes(label = Total_Global_Sales), size = 2) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  theme(plot.title = element_text(hjust = 0.5))
+```
+<hr>
+
+Berdasarkan Visualisasi diatas, kita dapat menjawab pertanyaan lain yaitu Platform dengan **Global_Sales** tertinggi. </br>
+
+Selanjutnya akan melakukan visualisasi yang terakhir untuk menjawab Business Questions yang terakhir </br>
+
+Sebelum itu, maka buatlah fungsi dengan aggregasi data berdasarkan region dan genre menggunakan fungsi aggregate dan sum
+```{r}
+NA_sum <- aggregate(NA_Sales ~ Genre, data, sum)
+EU_sum <- aggregate(EU_Sales ~ Genre, data, sum)
+JP_sum <- aggregate(JP_Sales ~ Genre, data, sum)
+Other_sum <- aggregate(Other_Sales ~ Genre, data, sum)
+Global_sum <- aggregate(Global_Sales ~ Genre, data, sum)
+```
+
+Setelah sudah, maka bisa dilakukan visualisasi dengan membuat beberapa visualisasi sesuai dengan region yang tersedia
+
+```{r}
+ggplot(NA_sum, aes(x = Genre, y = NA_Sales)) +
+  geom_bar(stat = "identity", fill = "lightgreen") +
+  labs(x = "Genre", y = "Sales") +
+  geom_text(aes(label=NA_Sales), nudge_y = 50) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Penjualan Terbanyak pada Wilayah Amerika Utara berdasarkan Genre Game")
+
+ggplot(EU_sum, aes(x = Genre, y = EU_Sales)) +
+  geom_bar(stat = "identity", fill = "lightgreen") +
+  labs(x = "Genre", y = "Sales") +
+  geom_text(aes(label=EU_Sales), nudge_y = 20) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Penjualan Terbanyak pada Wilayah Eropa berdasarkan Genre Game")
+
+ggplot(JP_sum, aes(x = Genre, y = JP_Sales)) +
+  geom_bar(stat = "identity", fill = "lightgreen") +
+  labs(x = "Genre", y = "Sales") +
+  geom_text(aes(label=JP_Sales), nudge_y = 20) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Penjualan Terbanyak pada Negara Jepang berdasarkan Genre Game")
+
+ggplot(Other_sum, aes(x = Genre, y = Other_Sales)) +
+  geom_bar(stat = "identity", fill = "lightgreen") +
+  labs(x = "Genre", y = "Sales") +
+  geom_text(aes(label=Other_Sales), nudge_y = 10) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Other Sales berdasarkan Genre Game")
+
+ggplot(Global_sum, aes(x = Genre, y = Global_Sales)) +
+  geom_bar(stat = "identity", fill = "lightgreen") +
+  labs(x = "Genre", y = "Sales") +
+  geom_text(aes(label=Global_Sales), nudge_y = 100) +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+  ggtitle("Global Sales berdasarkan Genre Game")
+
+```
+<hr>
+Pada Visualisasi-visualisasi di atas, kita dapat melihat penjualan terbesar dan penjualan terkecil setiap Region bedasarkan Genre nya. </br>
+
+Selanjutnya akan dilakukan visualisasi untuk melihat perbandingan dari setiap major region dalam penjualan berdasarkan Genre.
+```{r}
+# Menggabungkan kolom NA_Sales, EU_Sales, dan JP_Sales menjadi satu data frame
+sales_data <- data.frame(
+  genre = data$Genre,
+  North_America = data$NA_Sales,
+  Europe = data$EU_Sales,
+  Japan = data$JP_Sales
+)
+
+# Mengubah format data menjadi dalam bentuk long
+sales_data_long <- tidyr::gather(sales_data, key = "sales_type", value = "sales", -genre)
+
+# Membuat grouped bar plot dengan penjualan terbanyak berdasarkan sales_type
+ggplot(sales_data_long, aes(x = genre, y = sales, fill = sales_type)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  labs(x = "Genre Game", y = "Sales", fill = "Region") +
+  ggtitle("Perbandingan NA, EU, JP dalam Sales bedasarkan Genre Game") +
+  theme(axis.text.x = element_text(angle = 90, hjust = 1)) 
+ 
+```
+<hr>
+Dari Visualisasi di atas, kita dapat melihat perbandingan Sales berdasarkan Genre
+
+### 6 *Insight/Conclusion*
+
+
+
+<hr>
+
+1. Berdasarkan Visualisasi yang sudah dilakukan, Publisher dengan jumlah Game terbanyak dipegang oleh Electronic Arts dan dapat dilihat 9 Publisher lain yang masih masuk dalam kategori 10 besar.
+2. Untuk Platform dengan global sales terbanyak masih di dominasi oleh PS2, namun jika kita melihat 10 besar data maka terdapat juga XB360, PS3, Wii, dan lainnya. Jadi, jika ingin membuat game dapat berdasarkan platform tersebut jika ingin mendapatkan global sales yang tinggi(berdasarkan data)
+3. Dari Visualisasi tersebut, kita dapat melihat Sales berdasarkan Genre pada Region NA, EU, JP, Other, serta Global dan dapat menyimpulkan bahwa genre mana yang laris terjual di setiap Region.
+4. Dari Visualisasi di atas, Kita dapat melihat bahwa Region NA mendominasi penjualan dibanding dengan 2 major region lainnya yaitu Eropa dan Jepang. Namun ada juga di beberapa genre dimana Eropa memiliki sales yang lebih tinggi daripada NA. Sedangkan region Jepang belum pernah menduduki posisi 1 apabila dibandingkan dengan Region NA dan EU.
+
+
+<hr>

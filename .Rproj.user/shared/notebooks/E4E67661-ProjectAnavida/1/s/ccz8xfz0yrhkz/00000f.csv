@@ -1,0 +1,5 @@
+"0","NA_sum <- aggregate(NA_Sales ~ Genre, data, sum)"
+"0","EU_sum <- aggregate(EU_Sales ~ Genre, data, sum)"
+"0","JP_sum <- aggregate(JP_Sales ~ Genre, data, sum)"
+"0","Other_sum <- aggregate(Other_Sales ~ Genre, data, sum)"
+"0","Global_sum <- aggregate(Global_Sales ~ Genre, data, sum)"

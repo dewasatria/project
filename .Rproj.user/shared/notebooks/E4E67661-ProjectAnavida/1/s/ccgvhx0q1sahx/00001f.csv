@@ -1,0 +1,7 @@
+"0","ggplot(plot, mapping = aes(x = Var1, y = Freq)) +"
+"0","  geom_col(fill = 'lightgreen') + "
+"0","  labs(x = ""Publisher"", y = ""Jumlah Game"") +"
+"0","  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +"
+"0","  geom_text(aes(label=Freq), nudge_y = -100) +"
+"0","  ggtitle(""10 Publisher dengan Release Game terbanyak"") +"
+"0","  theme(plot.title = element_text(hjust = 0.5))"

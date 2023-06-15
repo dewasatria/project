@@ -1,0 +1,8 @@
+"0","ggplot(result2, mapping = aes(x = Total_Global_Sales, y = Platform)) + "
+"0","  geom_col(fill = 'lightgreen', width = 0.8) +"
+"0","  labs(y = ""Platform"", x = ""Total Penjualan Secara Keseluruhan (Global_Sales)"") + "
+"0","  "
+"0","  ggtitle(""Global Sales berdasarkan Jenis Platform"") +"
+"0","  geom_text(aes(label = Total_Global_Sales), size = 2) +"
+"0","  theme(axis.text.x = element_text(angle = 90, hjust = 1)) +"
+"0","  theme(plot.title = element_text(hjust = 0.5))"

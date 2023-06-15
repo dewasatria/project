@@ -1,0 +1,2 @@
+"0","index.data <- match(unique(data$Name), data$Name)"
+"0","unique_data <- data[index.data,]"
